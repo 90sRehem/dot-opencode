@@ -1,1 +1,0 @@
-/home/rehem/.local/share/chezmoi/dot_agents/skills/api-design-principles/assets/api-design-checklist.md

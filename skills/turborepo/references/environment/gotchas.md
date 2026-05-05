@@ -1,1 +1,0 @@
-/home/rehem/.local/share/chezmoi/dot_agents/skills/turborepo/references/environment/gotchas.md

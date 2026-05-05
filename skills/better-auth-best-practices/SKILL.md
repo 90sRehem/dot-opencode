@@ -1,1 +1,0 @@
-/home/rehem/.local/share/chezmoi/dot_agents/skills/better-auth-best-practices/SKILL.md

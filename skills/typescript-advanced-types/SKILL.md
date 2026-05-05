@@ -1,1 +1,0 @@
-/home/rehem/.local/share/chezmoi/dot_agents/skills/typescript-advanced-types/SKILL.md

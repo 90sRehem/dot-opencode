@@ -1,1 +1,0 @@
-/home/rehem/.local/share/chezmoi/dot_agents/skills/shadcn-ui/official-ui-reference.md

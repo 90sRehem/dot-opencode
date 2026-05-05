@@ -1,1 +1,0 @@
-/home/rehem/.local/share/chezmoi/dot_agents/skills/vercel-composition-patterns/rules/patterns-children-over-render-props.md

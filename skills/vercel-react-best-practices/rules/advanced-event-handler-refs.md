@@ -1,1 +1,0 @@
-/home/rehem/.local/share/chezmoi/dot_agents/skills/vercel-react-best-practices/rules/advanced-event-handler-refs.md

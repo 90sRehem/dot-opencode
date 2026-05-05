@@ -1,1 +1,0 @@
-/home/rehem/.local/share/chezmoi/dot_agents/skills/vercel-react-native-skills/rules/react-compiler-reanimated-shared-values.md

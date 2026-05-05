@@ -1,1 +1,0 @@
-/home/rehem/.local/share/chezmoi/dot_agents/skills/vercel-react-best-practices/rules/js-tosorted-immutable.md

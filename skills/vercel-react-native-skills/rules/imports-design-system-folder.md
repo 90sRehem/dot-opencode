@@ -1,1 +1,0 @@
-/home/rehem/.local/share/chezmoi/dot_agents/skills/vercel-react-native-skills/rules/imports-design-system-folder.md

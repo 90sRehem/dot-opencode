@@ -1,1 +1,12 @@
-/home/rehem/.local/share/chezmoi/dot_config/opencode/tui.json
+{
+  "$schema": "https://opencode.ai/tui.json",
+  "keybinds": {
+    "messages_page_up": "<leader>k",
+    "messages_page_down": "<leader>j",
+    "messages_copy": "<leader>y",
+    "session_compact": "<leader>c",
+    "model_list": "<leader>m",
+    "command_list": "ctrl+p",
+    "agent_list": "<leader>a"
+  }
+}
