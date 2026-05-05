@@ -1,0 +1,15 @@
+{
+  "$schema": "./schema.json",
+  "workflow_version": "1.0",
+  "name": "Bugfix",
+  "description": "Investigate and fix a bug with planning and review",
+  "scope": "medium",
+  "steps": [
+    { "agent": "scout", "gate_after": "G1" },
+    { "agent": "sage", "gate_after": "G1" },
+    { "agent": "forge", "gate_after": "G6" }
+  ],
+  "spec_artifacts": ["spec.md", "tasks.md"],
+  "gates_required": ["G1", "G6"],
+  "gates_optional": []
+}

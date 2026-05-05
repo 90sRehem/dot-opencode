@@ -1,0 +1,14 @@
+{
+  "$schema": "./schema.json",
+  "workflow_version": "1.0",
+  "name": "Debug Triage",
+  "description": "Quick investigation and fix for a reported bug",
+  "scope": "quick",
+  "steps": [
+    { "agent": "scout", "gate_after": "G1" },
+    { "agent": "forge", "gate_after": "G6" }
+  ],
+  "spec_artifacts": ["tasks.md"],
+  "gates_required": ["G0", "G1", "G6"],
+  "gates_optional": []
+}

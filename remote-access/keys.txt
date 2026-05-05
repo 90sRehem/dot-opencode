@@ -1,0 +1,14 @@
+# WireGuard Key Registry
+# Generated: 2026-05-03
+# Updated: 2026-05-03 — fresh client key pairs generated for QR code configs
+# Format: ROLE: <label> | PUB: <key> | FILE: <path>
+
+ROLE: server | PUB: z8/sLw6B50OS0swhFqXxhqD8+FqpwnOJvl207oGT9xk= | FILE: /etc/wireguard/server_public.key
+
+# --- Original keys (private keys on client devices) ---
+# ROLE: phone  | PUB: woiqUQ9VRx33WD00nIBp8tzxTFznl0xhZ4Xr1uhXhmM= | FILE: /etc/wireguard/clients/phone_public.key
+# ROLE: laptop | PUB: jB8f99GlN8jcuSo8RilRY+M2czQCaRU+Ec6OdikP6R0= | FILE: /etc/wireguard/clients/laptop_public.key
+
+# --- New keys (generated 2026-05-03 for QR code configs) ---
+ROLE: phone  | PUB: PTM5Ykl1AzkxsmitacOXcr7as94w67k340zMSPvTfjU= | PRIV: eOySr9j/3wJmgWTXnMVLB/7dqLmFUsHpt3qXh/HJQVY= | FILE: phone.conf
+ROLE: laptop | PUB: jjsl6t1M28wOx26zrb67EuThKKGFp2h9tD5vkYx1IEM= | PRIV: sNEt1g+qlVf5kXsnQy/fGcCRY5Sh2W5wAUC+v8SWuV4= | FILE: laptop.conf

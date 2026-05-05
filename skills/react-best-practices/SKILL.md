@@ -1,0 +1,1 @@
+/home/rehem/.local/share/chezmoi/dot_config/opencode/skills/react-best-practices/SKILL.md

@@ -1,0 +1,13 @@
+{
+  "$schema": "./schema.json",
+  "workflow_version": "1.0",
+  "name": "Hotfix",
+  "description": "Quick emergency fix with minimal overhead",
+  "scope": "quick",
+  "steps": [
+    { "agent": "forge", "gate_after": "G6" }
+  ],
+  "spec_artifacts": [],
+  "gates_required": ["G0", "G6"],
+  "gates_optional": []
+}

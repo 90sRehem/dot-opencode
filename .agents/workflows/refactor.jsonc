@@ -1,0 +1,16 @@
+{
+  "$schema": "./schema.json",
+  "workflow_version": "1.0",
+  "name": "Refactor",
+  "description": "Code refactoring with quality review by Arbiter",
+  "scope": "medium",
+  "steps": [
+    { "agent": "sage", "gate_after": "G1" },
+    { "agent": "forge" },
+    { "agent": "ward", "gate_after": "G5" },
+    { "agent": "arbiter", "gate_after": "G6" }
+  ],
+  "spec_artifacts": ["spec.md", "tasks.md"],
+  "gates_required": ["G1", "G5", "G6"],
+  "gates_optional": []
+}

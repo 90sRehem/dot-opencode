@@ -1,0 +1,1 @@
+/home/rehem/.local/share/chezmoi/dot_config/opencode/dot_agents/herald.md

@@ -1,0 +1,17 @@
+{
+  "$schema": "./schema.json",
+  "workflow_version": "1.0",
+  "name": "New Project",
+  "description": "Full project setup with exploration, planning, security and quality review",
+  "scope": "large",
+  "steps": [
+    { "agent": "scout", "gate_after": "G1" },
+    { "agent": "sage", "gate_after": "G1" },
+    { "agent": "forge", "gate_after": "G4" },
+    { "agent": "ward", "gate_after": "G5" },
+    { "agent": "arbiter", "gate_after": "G6" }
+  ],
+  "spec_artifacts": ["spec.md", "design.md", "tasks.md"],
+  "gates_required": ["G1", "G4", "G5", "G6"],
+  "gates_optional": []
+}

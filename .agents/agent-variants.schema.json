@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agent-variants.schema.json",
+  "title": "Agent Variants",
+  "description": "Declares which agents are active in the current workspace.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of this config file."
+    },
+    "agents": {
+      "type": "object",
+      "description": "Map of agent name to its variant configuration.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["enabled", "role"],
+        "additionalProperties": false,
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether this agent is active. Herald will not offer disabled agents as delegation targets."
+          },
+          "role": {
+            "type": "string",
+            "enum": ["coordinator", "explorer", "planner", "executor", "security", "quality"],
+            "description": "The agent's functional role."
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

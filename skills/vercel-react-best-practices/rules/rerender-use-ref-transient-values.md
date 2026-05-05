@@ -1,0 +1,1 @@
+/home/rehem/.local/share/chezmoi/dot_agents/skills/vercel-react-best-practices/rules/rerender-use-ref-transient-values.md

@@ -1,0 +1,30 @@
+{
+  "$schema": "./agent-variants.schema.json",
+  "description": "Declares which agents are active in the current workspace.",
+  "agents": {
+    "herald": {
+      "enabled": true,
+      "role": "coordinator"
+    },
+    "scout": {
+      "enabled": true,
+      "role": "explorer"
+    },
+    "sage": {
+      "enabled": true,
+      "role": "planner"
+    },
+    "forge": {
+      "enabled": true,
+      "role": "executor"
+    },
+    "ward": {
+      "enabled": true,
+      "role": "security"
+    },
+    "arbiter": {
+      "enabled": true,
+      "role": "quality"
+    }
+  }
+}

@@ -1,0 +1,1 @@
+/home/rehem/.local/share/chezmoi/dot_agents/skills/vercel-react-native-skills/rules/rendering-text-in-text-component.md

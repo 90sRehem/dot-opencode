@@ -1,0 +1,1 @@
+../../../../../../tmp/arcanum-test-1777767572740/source/test-skill/SKILL.md
