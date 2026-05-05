@@ -1,0 +1,32 @@
+# Node dependencies
+node_modules/
+package.json
+bun.lock
+package-lock.json
+.opencode/node_modules/
+.opencode/package*.json
+
+# Python
+__pycache__/
+
+# Spec artifacts (generated)
+.specs/archive/
+.specs/features/*/
+.specs/quick/*/
+.specs/features/**/.recovery.json
+.specs/features/**/.recovery.json.tmp
+
+# Runtime state
+.recovery.json
+SESSION_LOG.md
+.weave/
+
+# Cache
+graphify-out/
+
+# Local config
+docs/
+remote-access/
+remote-access-cli.py
+opencode-agent-tmux/
+.opencode/bun.lock
