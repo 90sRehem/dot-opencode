@@ -1,9 +1,10 @@
 ---
-  description: >
+description: >
     Strategic planner. Uses spec-driven skill to produce spec, design, and tasks files.
     Consumes learnings from Scout and synthesizes into artifacts.
     Can delegate Forge (for writing large specs). For Scout context, return needs_scout signal for Herald to route.
-model: opencode-go/deepseek-v4-pro
+model: openai/gpt-5.3-codex
+steps: 16
 mode: subagent
 permission:
   read: deny

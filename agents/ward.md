@@ -2,7 +2,7 @@
 description: >
   Security auditor. Reviews code for vulnerabilities and returns APPROVE or REJECT.
   Focus on OWASP Top 10, auth, crypto, input validation, secrets. Read-only.
-model: opencode-go/minimax-m2.7
+model: opencode-go/minimax-m2.5
 mode: subagent
 permission:
   write: deny

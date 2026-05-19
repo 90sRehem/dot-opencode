@@ -298,12 +298,12 @@ Agents must assign the correct `origin` value based on the message producer.
 2. Switch envelope.agent:
    - "scout"   → SCOUT_FINDINGS: inject payload.findings to Sage
    - "sage"    → switch envelope.status:
-                    "ready"         → specs written to disk; proceed to G1 (plan approval)
-                    "specs_to_write" → delegate Forge in ARTIFACTS WRITE MODE, then present G1
+                     "ready"         → specs written to disk; proceed to G2 (plan approval)
+                     "specs_to_write" → delegate Forge in ARTIFACTS WRITE MODE, then present G2
                     "needs_scout"   → delegate Scout with payload.topic
    - "forge"   → switch envelope.status:
                     "complete"          → start Post-Forge Protocol (G4 opt-in → G5 opt-in → G6)
-                    "artifacts_written" → specs now on disk; present G1 (plan approval)
+                     "artifacts_written" → specs now on disk; present G3 (execute gate)
                     "committed"         → execute POST-EXECUTION
    - "ward"    → switch envelope.status:
                     "approve" → present G5 result
@@ -519,6 +519,45 @@ Resuming execution...
 This prompt uses `meta.origin: "system"` to signal recovery context, not a new user request. All recovery fields are enclosed in XML tags to prevent interpretation as instructions.
 
 ---
+
+---
+
+## Summary Before Proceed Convention
+
+Herald emits a concise summary of subagent output before presenting any user-facing Question tool gate. This convention ensures the user has context before deciding next steps.
+
+### When Summaries Are Emitted
+
+| Subagent | Status | Before Gate | Summary Payload Fields |
+|----------|--------|-------------|----------------------|
+| Scout | `ready` (quick scope) | G0 | `payload.findings` — target files, constraints, risks |
+| Scout | `ready` (needs_scout path) | → re-delegate Sage (no gate) | `payload.findings` — key discoveries, recommended skills |
+| Sage | `ready` | G2 | `payload.change_name`, `artifacts[]`, `key_decisions[]`, `scope` |
+| Forge | `artifacts_written` | G3 | `payload.feature`, `files_created[]` |
+| Forge | `complete` | G4/G5 review gate | `payload.tasks_done`, `files_changed[]`, `proposed_commit.message` |
+
+### Format Guidelines
+
+- Summaries are **bullet lists**, ≤5 lines
+- Each line covers one dimension: what was done, key finding, files involved, next step
+- Summaries are **additive** — they precede the Question tool call, never replace the gate question or its options
+- The gate header, question text, and options remain unchanged from their defined format
+
+### Herald Parsing Integration
+
+The summary is derived from fields already present in the agent's JSON envelope. No additional parsing is required beyond what Herald already does:
+
+```
+1. Parse output as JSON → envelope
+2. Extract summary-relevant fields from envelope.payload
+3. Format as bullet list (≤5 lines)
+4. Emit summary to user
+5. Present Question tool gate (unchanged)
+```
+
+### Backward Compatibility
+
+Summaries are purely additive. Agent envelopes that lack summary-relevant fields (e.g., older outputs) are handled gracefully — Herald emits a minimal summary with available fields or skips the summary if no relevant data exists. The gate flow is unaffected.
 
 ---
 

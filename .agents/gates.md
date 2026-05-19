@@ -10,8 +10,8 @@ Herald uses the Question tool to pause before critical pipeline stages, ensuring
 
 | Gate | Trigger | Question to User | Obrigatório? |
 |------|---------|-----------------|-------------|
-| G0: Intent | Quick scope detected | "How do you want to proceed?" (Implement / Review plan first / Use Sage) | Quick apenas |
-| G1: Approve Plan | Sage retorna com specs prontos | "Plano pronto. Aprovar e prosseguir?" | Sim (todos scopes) |
+| G0: Intent | Quick scope detected | "How do you want to proceed?" (Implement with Scout / Review plan first / Use Sage) | Quick apenas |
+| G1: Approve Plan | Sage retorna com specs prontos | "Plano pronto. Aprovar e prosseguir?" | Sim (Medium/Large) |
 | G4/G5: Review | Após Forge completar | "Quer rodar reviews?" (Security+Quality / Skip) | **Opt-in** (default: oferecer) |
 | G6: Commit | Antes do commit | "Proposed commit: [message]. Approve?" | Sim |
 
@@ -24,10 +24,11 @@ Herald uses the Question tool to pause before critical pipeline stages, ensuring
 ### Quick (tarefas pequenas, tracking via specs)
 
 ```
-Herald → G0 → Sage (escreve tasks.md direto) → G1 → Forge → G6 → done
+Herald → G0 → Scout (gather context) → Forge (quick mode, no exploration) → G6 → done
 ```
 
-**Specs:** Apenas `tasks.md` em `.specs/features/<name>/`
+**Specs:** Apenas `tasks.md` em `.specs/features/<name>/` (se Sage for usado para planning)
+**Nota:** Scout coleta arquivos-alvo e constraints; Forge executa direto com base nos findings. Exceção: operações tool-only triviais (alvo já inequívoco) podem pular Scout.
 
 ### Medium (escopo claro, 2-5 arquivos)
 

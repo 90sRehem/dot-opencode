@@ -57,12 +57,12 @@ Agent definitions are in `agents/` (plural directory, official standard):
 
 | Agent | File | Mode | Model |
 |-------|------|------|-------|
-| Herald | `agents/herald.md` | primary | opencode-go/qwen3.6-plus |
+| Herald | `agents/herald.md` | primary | openai/gpt-5.4-mini-fast |
 | Scout | `agents/scout.md` | subagent | opencode-go/deepseek-v4-flash |
-| Sage | `agents/sage.md` | subagent | opencode-go/deepseek-v4-pro |
+| Sage | `agents/sage.md` | subagent | openai/gpt-5.3-codex |
 | Forge | `agents/forge.md` | subagent | opencode-go/qwen3.6-plus |
-| Ward | `agents/ward.md` | subagent | opencode-go/minimax-m2.7 |
-| Arbiter | `agents/arbiter.md` | subagent | opencode-go/qwen3.6-plus |
+| Ward | `agents/ward.md` | subagent | opencode-go/minimax-m2.5 |
+| Arbiter | `agents/arbiter.md` | subagent | opencode-go/qwen3.5-plus |
 
 **Key changes from previous version:**
 - Directory renamed from `agent/` to `agents/` (plural, official standard)

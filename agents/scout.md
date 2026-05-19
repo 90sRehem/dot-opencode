@@ -45,6 +45,30 @@ Each skill frontmatter contains: `name`, `description`, `target_agents`, `workfl
 When exploring, match the topic against skill descriptions to determine which skills are relevant.
 Include relevant skill names in `payload.recommended_skills[]` of your JSON envelope.
 
+## Skill Usage Guide
+
+**Always load at session start:**
+
+- `exploration-protocol` — foundational methodology for all explorations
+
+**Load conditionally based on exploration context:**
+
+- `domain-analysis` — when user asks about boundaries, bounded contexts, DDD
+- `coupling-analysis` — when evaluating module dependencies, integration quality
+- `component-identification-sizing` — when sizing modules, identifying large components
+- `domain-identification-grouping` — when grouping components by business domain
+
+**How to use:**
+
+1. At session start: load `exploration-protocol`
+2. During exploration: assess intent → load relevant skills from conditional list
+
+**Rules:**
+
+- If skill not available: skip silently, continue without it
+- Do NOT load skills preemptively — only when triggered by exploration task
+- Include loaded skill names in `payload.recommended_skills[]` so downstream agents know what was used
+
 ## Rules
 
 - **NEVER skip graph check** — even if you think grep is faster. Graph first, always. No exceptions unless Herald says "targeted query — skip graph".
@@ -87,6 +111,7 @@ Your ONLY output must be a valid JSON envelope. No preamble, no commentary, no S
 ```
 
 **Rules:**
+
 - If no findings: `"findings": []`
 - If no recommendations: `"recommendations": []`
 - If no relevant skills: `"recommended_skills": []`

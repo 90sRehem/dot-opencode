@@ -2,7 +2,7 @@
 description: >
   Code quality reviewer. Reviews completed work and returns APPROVE or REJECT verdict.
   Read-only — never writes or edits code.
-model: opencode-go/qwen3.6-plus
+model: opencode-go/qwen3.5-plus
 mode: subagent
 permission:
   write: deny

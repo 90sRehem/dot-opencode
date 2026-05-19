@@ -1,12 +1,11 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    "opencode-claude-auth",
-    // "opencode-snip",
+    // "opencode-claude-auth",
     "opencode-otel",
     "opencode-mem",
     "opencode-handoff",
-    "opencode-agent-tmux",
+    "opentmux",
     "@tarquinen/opencode-dcp",
     "@ramtinj95/opencode-tokenscope",
     "@runecraft/guild"
@@ -21,10 +20,10 @@
       }
     }
   },
-  "agent": {
-    "primary": "herald",
-    "agents_dir": "agents/",
-    "skills_dir": "skills/",
-    "workflows_dir": ".agents/workflows/"
-  }
+  "default_agent": "herald",
+  "skills": {
+    "paths": [
+      "skills/"
+    ]
+  },
 }

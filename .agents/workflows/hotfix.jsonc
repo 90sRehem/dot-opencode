@@ -2,9 +2,10 @@
   "$schema": "./schema.json",
   "workflow_version": "1.0",
   "name": "Hotfix",
-  "description": "Quick emergency fix with minimal overhead",
+  "description": "Quick emergency fix — Scout gathers context, Forge executes directly",
   "scope": "quick",
   "steps": [
+    { "agent": "scout", "gate_after": null },
     { "agent": "forge", "gate_after": "G6" }
   ],
   "spec_artifacts": [],
