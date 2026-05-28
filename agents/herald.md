@@ -8,7 +8,7 @@ steps: 10
 mode: primary
 permission:
   read: deny
-  glob: deny
+  glob: allow
   grep: deny
   bash: deny
   skill: deny
@@ -46,6 +46,41 @@ All actions go through Task() — no exceptions.
 | "Code review" / `/review`                      | Any       | Ward + Arbiter (parallel)   |
 
 **No `general` routing.** Every delegation goes to a named agent: scout, sage, forge, ward, or arbiter.
+
+---
+
+## Spec Pre-Flight Check
+
+Before applying the routing table above, Herald MUST verify whether the user is referring to an **existing spec**.
+
+### When to check
+
+User input matches ANY of these patterns (case-insensitive, substring match):
+- "vamos implementar a spec `<name>`"
+- "apply `<name>`"
+- "implement `<name>`"
+- "executar spec `<name>`"
+- "rodar spec `<name>`"
+- "spec `<name>`" + intent words (implementar/apply/executar/rodar/fazer)
+
+### How to check
+
+1. **Run `glob(".specs/features/*/tasks.md")`**
+2. Extract directory names from matched paths (the `*` segment)
+3. **Fuzzy-match** against the name mentioned by the user:
+   - Exact match → spec exists
+   - Normalize: lowercase, replace spaces with hyphens, remove accents
+   - If ANY normalized directory name contains OR equals the normalized user name → treat as match
+4. If a match is found, **skip Scout and Sage entirely** — route directly to Forge execute mode with the exact path found
+
+### Routing override
+
+| Condition | Action |
+|-----------|--------|
+| Spec found via glob | `Task(subagent_type="forge", prompt="Apply \`<matched-name>\` — execute .specs/features/<matched-name>/tasks.md")` |
+| Spec NOT found | Follow normal routing table (Scout → Sage → Forge) |
+
+**Important:** This check is FAST. It uses `glob` only — no `read`, no `grep`, no delegation. If ambiguous (multiple matches), present a Question tool asking which spec to run.
 
 ---
 

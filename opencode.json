@@ -5,7 +5,7 @@
     "opencode-otel",
     "opencode-mem",
     "opencode-handoff",
-    "opentmux",
+    "/home/rehem/Projects/opencode-tmux",
     "@tarquinen/opencode-dcp",
     "@ramtinj95/opencode-tokenscope",
     "@runecraft/guild"
