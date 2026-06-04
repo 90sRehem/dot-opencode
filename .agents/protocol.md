@@ -2,7 +2,7 @@
 
 # JSON Inter-Agent Protocol
 
-**Source of truth for inter-agent communication.** `agents.md` instructs agents to emit these envelopes; `herald.md` defines parsing logic.
+**Source of truth for inter-agent communication.** `AGENTS.md` instructs agents to emit these envelopes; `herald.md` defines parsing logic.
 
 ## Universal Envelope
 
@@ -99,7 +99,7 @@ Agents must assign the correct `origin` value based on the message producer.
 
 **Status values:** `ready` | `needs_scout` | `specs_to_write`
 
-**Status: ready** (specs written directly by Sage to disk)
+**Status: ready** (Sage produced planning artifacts and awaits G1/G2 approval flow)
 ```json
 {
   "agent": "sage",
@@ -111,7 +111,7 @@ Agents must assign the correct `origin` value based on the message producer.
     "scope": "quick|medium|large",
     "key_decisions": ["string — architectural decision"],
     "task_count": 0,
-    "next_action": "proceed_to_g1"
+    "next_action": "present_g1"
   }
 }
 ```
@@ -146,7 +146,7 @@ Agents must assign the correct `origin` value based on the message producer.
 
 **Examples:**
 ```json
-{"agent":"sage","schema_version":"1.0","status":"ready","payload":{"change_name":"add-jwt-auth","artifacts":[".specs/features/add-jwt-auth/spec.md",".specs/features/add-jwt-auth/design.md",".specs/features/add-jwt-auth/tasks.md"],"scope":"medium","key_decisions":["JWT with RS256","Refresh token in httpOnly cookie"],"task_count":12,"next_action":"proceed_to_g2"}}
+{"agent":"sage","schema_version":"1.0","status":"ready","payload":{"change_name":"add-jwt-auth","artifacts":[".specs/features/add-jwt-auth/spec.md",".specs/features/add-jwt-auth/design.md",".specs/features/add-jwt-auth/tasks.md"],"scope":"medium","key_decisions":["JWT with RS256","Refresh token in httpOnly cookie"],"task_count":12,"next_action":"present_g1"}}
 
 {"agent":"sage","schema_version":"1.0","status":"needs_scout","payload":{"topic":"database-schema","reason":"No schema found in initial exploration"}}
 ```
@@ -298,13 +298,13 @@ Agents must assign the correct `origin` value based on the message producer.
 2. Switch envelope.agent:
    - "scout"   → SCOUT_FINDINGS: inject payload.findings to Sage
    - "sage"    → switch envelope.status:
-                     "ready"         → specs written to disk; proceed to G2 (plan approval)
-                     "specs_to_write" → delegate Forge in ARTIFACTS WRITE MODE, then present G2
-                    "needs_scout"   → delegate Scout with payload.topic
+                     "ready"          → present G1 (approve plan)
+                     "specs_to_write" → after G2 approval, delegate Forge in ARTIFACTS WRITE MODE
+                     "needs_scout"    → delegate Scout with payload.topic
    - "forge"   → switch envelope.status:
-                    "complete"          → start Post-Forge Protocol (G4 opt-in → G5 opt-in → G6)
+                     "complete"          → start Post-Forge Protocol (G4/G5 → G6)
                      "artifacts_written" → specs now on disk; present G3 (execute gate)
-                    "committed"         → execute POST-EXECUTION
+                     "committed"         → execute POST-EXECUTION
    - "ward"    → switch envelope.status:
                     "approve" → present G5 result
                     "reject"  → present findings to user (fix/dismiss/abort)
@@ -325,65 +325,73 @@ Workflows are declarative JSON files in `.agents/workflows/` that define custom 
 **Schema:**
 ```json
 {
-  "workflow_version": "1.0",
+  "workflow_version": "2.0",
   "name": "string — human-readable workflow name",
   "description": "string — what this workflow does",
-  "scope": "quick|medium|large",
+  "gates": {
+    "G0": {
+      "mode": "required|optional|disabled",
+      "header": "string — short label (optional)",
+      "question": "string — custom question (optional)"
+    }
+  },
   "steps": [
     {
+      "name": "string — step identifier (optional)",
       "agent": "scout|sage|forge|ward|arbiter",
-      "gate_after": "G0|G1|G4|G5|G6",
-      "skip_on": "condition expression (optional)"
+      "gate_after": "G0|G1|G2|G3|G4|G5|G6|null",
+      "parallel_agents": []
     }
-  ],
-  "spec_artifacts": ["string — files Sage must write"],
-  "gates_required": ["G0", "G1", "G6"],
-  "gates_optional": ["G4", "G5"]
+  ]
 }
 ```
 
 **Example (debug-triage):**
 ```json
 {
-  "workflow_version": "1.0",
+  "workflow_version": "2.0",
   "name": "Debug Triage",
   "description": "Quick investigation and fix for a reported bug",
-  "scope": "quick",
+  "gates": {
+    "G0": { "mode": "required" },
+    "G1": { "mode": "required" },
+    "G6": { "mode": "required" }
+  },
   "steps": [
-    { "agent": "sage", "gate_after": "G1" },
-    { "agent": "forge", "gate_after": "G6" }
-  ],
-  "spec_artifacts": ["tasks.md"],
-  "gates_required": ["G0", "G1", "G6"],
-  "gates_optional": []
+    { "name": "explore", "agent": "scout", "gate_after": "G1" },
+    { "name": "execute", "agent": "forge", "gate_after": "G6" }
+  ]
 }
 ```
 
 **Example (secure-feature):**
 ```json
 {
-  "workflow_version": "1.0",
+  "workflow_version": "2.0",
   "name": "Secure Feature",
   "description": "Full feature development with security and quality review",
-  "scope": "large",
+  "gates": {
+    "G0": { "mode": "required" },
+    "G1": { "mode": "required" },
+    "G4": { "mode": "required" },
+    "G5": { "mode": "required" },
+    "G6": { "mode": "required" }
+  },
   "steps": [
-    { "agent": "sage", "gate_after": "G1" },
-    { "agent": "forge", "gate_after": "G4" },
-    { "agent": "ward", "gate_after": "G5" },
-    { "agent": "arbiter", "gate_after": "G6" }
-  ],
-  "spec_artifacts": ["spec.md", "design.md", "tasks.md"],
-  "gates_required": ["G0", "G1", "G6"],
-  "gates_optional": ["G4", "G5"]
+    { "name": "planning", "agent": "sage", "gate_after": "G1" },
+    { "name": "execute", "agent": "forge", "gate_after": "G4" },
+    { "name": "security-review", "agent": "ward", "gate_after": "G5" },
+    { "name": "quality-review", "agent": "arbiter", "gate_after": "G6" }
+  ]
 }
 ```
 
 **Workflow Execution Rules:**
 - Herald loads workflow from `.agents/workflows/<name>.jsonc`
 - Each step executes in order; `gate_after` determines which gate presents after that agent completes
-- `skip_on` allows conditional step skipping (e.g., `"skip_on": "scope == quick"`)
-- `spec_artifacts` tells Sage which files to write for this scope
-- `gates_required` are always enforced; `gates_optional` are offered to user
+- `skip_on` allows conditional step skipping
+- `gates` declares all gates used by the workflow with their enforcement mode and optional presentation
+- `gate_after` must reference a gate declared in `gates` (or be `null` for no gate)
 
 ---
 
@@ -469,7 +477,7 @@ When resuming from a recovery checkpoint, Forge MUST validate recovery file age:
 
 Forge MUST use atomic write semantics to prevent file corruption.
 
-**See also:** [Forge Recovery Checkpointing](agents.md#recovery-checkpointing) — when Forge writes checkpoints
+**See also:** [Recovery Write Protocol](#recovery-write-protocol) — when Forge writes checkpoints
 
 1. **Cleanup stale temp files**: On startup, if `.recovery.json.tmp` exists (leftover from crash), delete it before proceeding — it represents an incomplete write
 2. **Write to temporary file**: Write to `.specs/features/<name>/.recovery.json.tmp`
@@ -532,7 +540,7 @@ Herald emits a concise summary of subagent output before presenting any user-fac
 |----------|--------|-------------|----------------------|
 | Scout | `ready` (quick scope) | G0 | `payload.findings` — target files, constraints, risks |
 | Scout | `ready` (needs_scout path) | → re-delegate Sage (no gate) | `payload.findings` — key discoveries, recommended skills |
-| Sage | `ready` | G2 | `payload.change_name`, `artifacts[]`, `key_decisions[]`, `scope` |
+| Sage | `ready` | G1 | `payload.change_name`, `artifacts[]`, `key_decisions[]`, `scope` |
 | Forge | `artifacts_written` | G3 | `payload.feature`, `files_created[]` |
 | Forge | `complete` | G4/G5 review gate | `payload.tasks_done`, `files_changed[]`, `proposed_commit.message` |
 
@@ -573,6 +581,76 @@ Session resilience features are **additive** — all changes maintain strict bac
 | Null context monitor hook | No warnings or pauses — monitoring is disabled, no-op |
 
 **All changes are purely additive.** Existing agent outputs that lack `meta` blocks continue to work. New recovery infrastructure is opt-in (only engaged when `.recovery.json` exists or Forge explicitly writes it). Context monitoring is transparent to agents that don't implement the hook.
+
+---
+
+## Session Handoff Payload
+
+When Herald exhausts its step/tool budget mid-workflow, it emits a `session_handoff` block to preserve user intent across sessions. This is distinct from Forge's `.recovery.json` — it captures orchestration state, not task completion state.
+
+### Schema
+
+```json
+{
+  "type": "session_handoff",
+  "reason": "step_budget_exhausted | manual_handoff",
+  "pending_action": "run_reviews_parallel | run_ward_only | run_arbiter_only | present_g6_commit_gate | delegate_forge_execute | delegate_forge_commit",
+  "last_gate": "G0 | G1 | G4 | G5 | G6",
+  "resume_prompt": "string — ready-to-paste prompt for a new session",
+  "context": {
+    "feature": "string — feature slug",
+    "scope": "quick | medium | large",
+    "specs_path": ".specs/features/<name>/",
+    "forge_complete": true,
+    "tasks_done": 0,
+    "files_changed": ["string — modified paths"],
+    "proposed_commit": {
+      "type": "feat | fix | refactor | docs | chore",
+      "scope": "string",
+      "message": "string"
+    },
+    "user_review_choice": "parallel | security_only | quality_only | skip",
+    "review_results": {
+      "ward": "approve | reject | pending",
+      "arbiter": "approve | reject | pending"
+    }
+  }
+}
+```
+
+### Key invariants
+
+- `pending_action` drives the next session's first delegation — the new Herald reads this and knows exactly which agent(s) to invoke
+- `user_review_choice` is the user's G4/G5 selection — MUST NOT be re-asked in the new session
+- `context` carries all data the next session needs to resume without re-deriving anything
+- `resume_prompt` is the human-readable equivalent; the agent reads `pending_action` + `context` to drive behavior
+
+### Example — Reviews pending
+
+```json
+{
+  "type": "session_handoff",
+  "reason": "step_budget_exhausted",
+  "pending_action": "run_reviews_parallel",
+  "last_gate": "G4",
+  "resume_prompt": "Retomar: add-jwt-auth — executar Ward + Arbiter em paralelo e apresentar resultados.\nGate atual: G4/G5 (reviews)\nArtefatos: .specs/features/add-jwt-auth/\nOutput do Forge: 12 tasks done, files: src/auth.ts, src/middleware/jwt.ts, proposed commit: feat(auth): add JWT authentication with RS256\nUsuário escolheu Security + Quality (parallel).",
+  "context": {
+    "feature": "add-jwt-auth",
+    "scope": "medium",
+    "specs_path": ".specs/features/add-jwt-auth/",
+    "forge_complete": true,
+    "tasks_done": 12,
+    "files_changed": ["src/auth.ts", "src/middleware/jwt.ts"],
+    "proposed_commit": {
+      "type": "feat",
+      "scope": "auth",
+      "message": "feat(auth): add JWT authentication with RS256"
+    },
+    "user_review_choice": "parallel",
+    "review_results": { "ward": "pending", "arbiter": "pending" }
+  }
+}
+```
 
 ---
 

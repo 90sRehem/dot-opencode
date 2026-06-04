@@ -1,6 +1,19 @@
 # Agent Guidelines
 
-Multi-agent system: Herald (coordinator), Scout (explorer), Sage (planner), Forge (executor), Ward (security), Arbiter (quality).
+Native OpenCode commands take precedence over this workspace's custom agent workflow.
+
+## Native Command Precedence
+
+The commands `build` and `plan` are reserved native OpenCode commands and must use OpenCode's default agents and routing behavior.
+
+Do not reinterpret, remap, or intercept `build` or `plan` into this workspace's custom multi-agent workflow.
+
+This workspace's custom agents are opt-in:
+- `herald` uses the custom workspace workflow
+- `scout`, `sage`, `forge`, `ward`, and `arbiter` are workspace-specific agents
+- custom workflows apply only when explicitly invoked, not when the user uses native OpenCode commands
+
+This workspace defines a custom multi-agent system: Herald (coordinator), Scout (explorer), Sage (planner), Forge (executor), Ward (security), Arbiter (quality).
 
 **Core tradeoff:** Correctness and clarity over speed. Use judgment for trivial tasks.
 
@@ -30,7 +43,7 @@ Multi-agent system: Herald (coordinator), Scout (explorer), Sage (planner), Forg
 
 Agents must actively monitor their context window usage to prevent silent degradation or token exhaustion.
 
-**See also:** [Context Window Monitor](.agents/agents.md#context-window-monitor) — detailed hook interface and behavior specs
+**See also:** [Context Window Monitor](#context-management) — detailed hook interface and behavior specs
 
 Key thresholds:
 
@@ -47,13 +60,15 @@ The context monitor hook is nullable — if disabled, monitoring has no effect. 
 
 **Never delegate:** single-file edits, targeted known commands.
 
+**Exception:** when the user invokes native OpenCode commands such as `build` or `plan`, follow OpenCode's default routing instead of this workspace's custom agent workflow.
+
 **Agent availability:** Agent availability depends on `.agents/agent-variants.json`. Check this file to determine which agents are enabled in the current workspace.
 
 ---
 
 ## Agent Definitions
 
-Agent definitions are in `agents/` (plural directory, official standard):
+Workspace custom agent definitions are in `agents/` (plural directory, official standard):
 
 | Agent | File | Mode | Model |
 |-------|------|------|-------|
@@ -69,7 +84,7 @@ Agent definitions are in `agents/` (plural directory, official standard):
 - Sage can now delegate Forge (for writing large specs) and Scout (for more context)
 - Forge loads skills via frontmatter discovery (no hardcoded registry)
 - Scout returns `recommended_skills[]` in JSON envelope
-- Large scope: G4 (Ward) + G5 (Arbiter) are mandatory, not opt-in
+- Gate modes are declared per-workflow via `gates` field (required/optional/disabled)
 
 ---
 
@@ -94,12 +109,16 @@ Scout reads skill frontmatter during exploration and returns `recommended_skills
 
 Available workflows in `.agents/workflows/`:
 
-| Workflow | Scope | Steps | Mandatory Gates |
-|----------|-------|-------|----------------|
-| `bugfix` | medium | Scout → Sage → Forge | G1, G6 |
-| `refactor` | medium | Sage → Forge → Arbiter | G1, G4, G6 |
-| `hotfix` | quick | Forge | G0, G6 |
-| `new-project` | large | Scout → Sage → Forge → Ward → Arbiter | G1, G4, G5, G6 |
+These are workspace-local workflows. They do not override native OpenCode commands such as `build` and `plan`.
+
+| Workflow | Steps | Gates |
+|----------|-------|-------|
+| `bugfix` | Scout → Sage → Forge | G1, G6 |
+| `refactor` | Sage → Forge → Ward → Arbiter | G1, G4, G5, G6 |
+| `hotfix` | Scout → Forge | G0, G6 |
+| `new-project` | Scout → Sage → Forge → Ward → Arbiter | G1, G4, G5, G6 |
+| `debug-triage` | Scout → Sage → Forge | G0, G1, G6 |
+| `secure-feature` | Scout → Sage → Forge → Ward → Arbiter | G0, G1, G4, G5, G6 |
 
 ---
 
@@ -126,7 +145,6 @@ Available workflows in `.agents/workflows/`:
 ## Detailed Instructions
 
 - [JSON Inter-Agent Protocol](.agents/protocol.md) — schemas, progressive disclosure
-- [Approval Gate System](.agents/gates.md) — G1-G6, Question tool enforcement
-- [Herald](agents/herald.md) — routing, quick flow, commit flow
+- [Approval Gate System](.agents/gates.md) — G0-G6, Question tool enforcement
+- [Herald](agents/herald.md) — custom workspace routing, quick flow, commit flow
 - [Agent Definitions](agents/) — individual agent markdown files
-- [Full Flow Architecture](OPENCODE-FLOW.md) — complete system reference

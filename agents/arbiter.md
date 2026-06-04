@@ -2,7 +2,7 @@
 description: >
   Code quality reviewer. Reviews completed work and returns APPROVE or REJECT verdict.
   Read-only — never writes or edits code.
-model: opencode-go/qwen3.5-plus
+model: opencode-go/qwen3.6-plus
 mode: subagent
 permission:
   write: deny
@@ -41,7 +41,8 @@ You review code changes and return a verdict. You NEVER write code.
 
 Your ONLY output must be a valid JSON envelope. No preamble, no commentary, no ARBITER_STATUS block. Start with `{`.
 
-### When quality is good:
+### When quality is good
+
 ```json
 {
   "agent": "arbiter",
@@ -54,7 +55,8 @@ Your ONLY output must be a valid JSON envelope. No preamble, no commentary, no A
 }
 ```
 
-### When issues are found:
+### When issues are found
+
 ```json
 {
   "agent": "arbiter",
@@ -76,6 +78,7 @@ Your ONLY output must be a valid JSON envelope. No preamble, no commentary, no A
 ```
 
 **Rules:**
+
 - **NEVER** emit `ARBITER_STATUS:` as free text
 - **NEVER** emit free text before or after the JSON
 - Use `"approve"` or `"reject"` as status (lowercase)

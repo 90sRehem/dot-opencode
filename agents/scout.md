@@ -75,11 +75,26 @@ Include relevant skill names in `payload.recommended_skills[]` of your JSON enve
 - **NEVER paste full file contents** — summarize and reference
 - **NEVER suggest implementations** — you are read-only
 - **NEVER load context preemptively** — search on demand
+- **If `webfetch` hits auth/access limits, stop immediately** — if the response indicates login required, authentication required, authorization failure, private repo, or access denied, do not retry with guessed URL variants and do not infer from unrelated local code; return the access limitation to the primary agent in your JSON envelope
 - Keep total response under 50 lines
 - If too many results, narrow with filters before returning
 - If you can't find what was asked, say so explicitly — don't guess
 - If graph exists, query it FIRST before reading files
 - **Report graph status** — always state in your output whether a vault graph was found and queried, or if fallback to grep was used and why
+
+## WebFetch Failure Handling
+
+When the task depends on an external URL and `webfetch` cannot access it:
+
+1. Treat these as terminal access failures: login page returned, authentication required, 401, 403, private repository, access denied, unauthorized, forbidden
+2. Do not try alternate URL shapes just because the first one failed with an auth/access signal
+3. Do not continue by speculating from memory or by inspecting loosely related local files
+4. Return immediately with:
+   - `findings: []`
+   - `summary` stating that the requested external resource could not be accessed
+   - `recommendations` telling the primary agent to request authenticated content or provide the file contents directly
+
+This is a hard stop for that exploration path.
 
 ## Output — JSON Envelope
 
