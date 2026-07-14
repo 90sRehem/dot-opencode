@@ -17,7 +17,12 @@
     },
     "graphify": {
       "type": "local",
-      "command": ["/home/rehem/.local/share/mise/installs/python/3.14.3/bin/python", "-m", "graphify.serve", "graphify-out/graph.json"],
+      "command": [
+        "/home/rehem/.local/share/mise/installs/python/3.14.3/bin/python",
+        "-m",
+        "graphify.serve",
+        "graphify-out/graph.json"
+      ],
       "enabled": true
     },
     "exa": {
@@ -27,7 +32,15 @@
     },
     "markitdown": {
       "type": "local",
-      "command": ["/home/rehem/.local/share/mise/installs/python/3.14.3/bin/python3", "/home/rehem/.config/opencode/markitdown_mcp_server.py"],
+      "command": [
+        "/home/rehem/.local/share/mise/installs/python/3.14.3/bin/python3",
+        "/home/rehem/.config/opencode/markitdown_mcp_server.py"
+      ],
+      "enabled": true
+    },
+    "grep-app": {
+      "type": "remote",
+      "url": "https://mcp.grep.app",
       "enabled": true
     }
   }
